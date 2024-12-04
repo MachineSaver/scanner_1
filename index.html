@@ -87,7 +87,7 @@
             const barcodeData = document.getElementById('barcode_data').value;
             const date = document.getElementById('date').value;
             const parameter = document.getElementById('parameter').value;
-            fetch('http://http://tcp://4.tcp.ngrok.io:15220/receive_barcode', {
+            fetch('tcp://6.tcp.ngrok.io:19911/receive_barcode', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
