@@ -12,6 +12,9 @@
         .form-group {
             margin-bottom: 15px;
         }
+        #qr-reader {
+            width: 100%;
+        }
     </style>
 </head>
 <body>
@@ -45,17 +48,46 @@
                     <option value="SIM ICCID">SIM ICCID</option>
                 </select>
             </div>
+            <button type="button" class="btn btn-primary btn-block" onclick="scanBarcode()">Scan Barcode</button>
             <button type="submit" class="btn btn-primary btn-block">Send Barcode Data</button>
         </form>
+        <div id="qr-reader" style="display:none;"></div>
     </div>
 
+    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
     <script>
+        // Set the date input to today's date
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('date').value = today;
+        });
+
+        function scanBarcode() {
+            const qrReader = document.getElementById('qr-reader');
+            qrReader.style.display = 'block';
+            const html5QrcodeScanner = new Html5QrcodeScanner(
+                "qr-reader", { fps: 10, qrbox: 250, rememberLastUsedCamera: true });
+            html5QrcodeScanner.render(success, error);
+
+            function success(decodedText, decodedResult) {
+                document.getElementById('barcode_data').value = decodedText;
+                html5QrcodeScanner.clear().catch(error => {
+                    console.error("Failed to clear the qrcode scanner. ", error);
+                });
+                qrReader.style.display = 'none';
+            }
+
+            function error(err) {
+                console.error("Error: ", err);
+            }
+        }
+
         document.getElementById('barcodeForm').addEventListener('submit', function(event) {
             event.preventDefault();
             const barcodeData = document.getElementById('barcode_data').value;
             const date = document.getElementById('date').value;
             const parameter = document.getElementById('parameter').value;
-            fetch('http://tcp://4.tcp.ngrok.io:15220/receive_barcode', {
+            fetch('http://http://tcp://4.tcp.ngrok.io:15220/receive_barcode', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -73,3 +105,4 @@
     </script>
 </body>
 </html>
+
