@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barcode Scanner</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">Barcode Scanner</h1>
+        <form id="barcodeForm">
+            <div class="form-group">
+                <label for="barcode_data">Barcode Data:</label>
+                <input type="text" class="form-control" id="barcode_data" name="barcode_data" required>
+            </div>
+            <div class="form-group">
+                <label for="date">Date:</label>
+                <input type="date" class="form-control" id="date" name="date" required>
+            </div>
+            <div class="form-group">
+                <label for="parameter">Parameter:</label>
+                <select class="form-control" id="parameter" name="parameter" required>
+                    <option value="Sales Order Number">Sales Order Number</option>
+                    <option value="Cloudgate Model">Cloudgate Model</option>
+                    <option value="Cloudgate Serial Number">Cloudgate Serial Number</option>
+                    <option value="Cloudgate IMEI">Cloudgate IMEI</option>
+                    <option value="Cloudgate MAC Address">Cloudgate MAC Address</option>
+                    <option value="Cloudgate LAN1 IP Address">Cloudgate LAN1 IP Address</option>
+                    <option value="VPN Username">VPN Username</option>
+                    <option value="VPN Password">VPN Password</option>
+                    <option value="Battery Backup">Battery Backup</option>
+                    <option value="VPN IP Address">VPN IP Address</option>
+                    <option value="Bipom Serial Number">Bipom Serial Number</option>
+                    <option value="SIM Provider">SIM Provider</option>
+                    <option value="SIM Model">SIM Model</option>
+                    <option value="SIM ICCID">SIM ICCID</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Send Barcode Data</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('barcodeForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const barcodeData = document.getElementById('barcode_data').value;
+            const date = document.getElementById('date').value;
+            const parameter = document.getElementById('parameter').value;
+            fetch('http://tcp://4.tcp.ngrok.io:15220/receive_barcode', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `barcode_data=${encodeURIComponent(barcodeData)}&date=${encodeURIComponent(date)}&parameter=${encodeURIComponent(parameter)}`
+            })
+            .then(response => response.text())
+            .then(data => {
+                console.log('Success:', data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>
